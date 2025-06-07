@@ -1,0 +1,142 @@
+/* 全局样式 */
+QWidget {
+    font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+    font-size: 9pt;
+}
+
+/* 主窗口样式 */
+QMainWindow {
+    background-color: #f5f5f5;
+}
+
+/* 工具栏样式 */
+QToolBar {
+    background-color: #f0f0f0;
+    border-bottom: 1px solid #ddd;
+    padding: 2px;
+}
+
+QToolBar QToolButton {
+    border: 1px solid transparent;
+    border-radius: 3px;
+    padding: 2px;
+    margin: 0px;
+}
+
+QToolBar QToolButton:hover {
+    background-color: #e0e0e0;
+    border: 1px solid #ccc;
+}
+
+QToolBar QToolButton:pressed {
+    background-color: #d0d0d0;
+    border: 1px solid #bbb;
+}
+
+/* 搜索框样式 */
+QLineEdit {
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 3px;
+    background-color: white;
+}
+
+QLineEdit:focus {
+    border: 1px solid #0078d7;
+}
+
+/* 按钮样式 */
+QPushButton {
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 5px 10px;
+    background-color: #f8f8f8;
+}
+
+QPushButton:hover {
+    background-color: #e8e8e8;
+    border: 1px solid #bbb;
+}
+
+QPushButton:pressed {
+    background-color: #d8d8d8;
+    border: 1px solid #aaa;
+}
+
+QPushButton:flat {
+    border: none;
+    background-color: transparent;
+}
+
+QPushButton:flat:hover {
+    background-color: #e8e8e8;
+}
+
+/* 禁用按钮样式 */
+QPushButton:disabled {
+    background-color: #f0f0f0;
+    color: #999999;
+    border: 1px solid #d0d0d0;
+}
+
+/* QToolButton#pasteButton:enabled {
+    background-color: lightblue;
+    border: 2px solid blue;
+}
+
+QToolButton#pasteButton:disabled {
+    background-color: fuchsia !important; 
+    border: 3px solid lime !important;
+    color: white !important;
+} */
+
+QToolBar QToolButton:disabled {
+    background-color: #d3d3d3; /* Standard disabled gray */
+    color: #888888;            /* Standard disabled text color */
+    border: 1px solid #bababa;   /* Standard disabled border */
+}
+
+QToolButton:disabled {
+    background-color: #d3d3d3;
+    color: #888888;
+    border: 1px solid #bababa;
+}
+
+/* 树控件样式 */
+QTreeWidget {
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    background-color: white;
+}
+
+QTreeWidget::item {
+    padding: 5px;
+}
+
+QTreeWidget::item:hover {
+    background-color: #e8e8e8;
+}
+
+QTreeWidget::item:selected {
+    background-color: #0078d7;
+    color: white;
+}
+/* 网址卡片美化 */
+QWidget#BookmarkItemWidget {
+    background: #fcfcfc;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+QWidget#BookmarkItemWidget:hover {
+    border: 1.5px solid #0078d7;
+    background: #f6faff;
+}
+QWidget#BookmarkItemWidget[selected="true"] {
+    border: 2px solid #0078d7;
+    background: #cce5ff;
+}
+QWidget#BookmarkItemWidget[highlighted="true"] {
+    border: 2px solid #ff9800;
+    background: #fffbe6;
+}

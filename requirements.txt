@@ -1,0 +1,22 @@
+# 必需依赖
+PyQt5>=5.15.0
+beautifulsoup4>=4.9.0
+requests>=2.25.0
+Pillow>=8.0.0
+
+# 可选但推荐的依赖
+# 用于增强JSON验证
+jsonschema>=3.2.0
+# 用于更安全的HTML解析
+lxml>=4.6.0
+
+# 开发依赖（仅在开发时需要）
+# pytest>=6.0.0
+# black>=21.5b2
+# flake8>=3.9.0
+
+pyinstaller==6.0.0
+urllib3==2.0.4
+soupsieve==2.4.1
+certifi==2023.7.22
+chardet==5.2.0

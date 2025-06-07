@@ -1,0 +1,9 @@
+This directory will contain screenshots and images for the URL Navigator documentation.
+
+Suggested screenshots to add:
+1. Main application interface
+2. Bookmark management view
+3. Folder organization
+4. Search functionality
+5. Settings panel
+6. Import/Export wizard 

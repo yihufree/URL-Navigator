@@ -1,0 +1,188 @@
+{
+  "程序开发": {
+    "type": "folder",
+    "children": {
+      "编程语言": {
+        "type": "folder",
+        "children": {
+          "Python": {
+            "type": "url",
+            "url": "https://www.python.org",
+            "name": "Python官网",
+            "icon": ""
+          },
+          "JavaScript": {
+            "type": "url",
+            "url": "https://developer.mozilla.org/zh-CN/docs/Web/JavaScript",
+            "name": "MDN JavaScript",
+            "icon": ""
+          },
+          "Java": {
+            "type": "url",
+            "url": "https://www.java.com",
+            "name": "Java官网",
+            "icon": ""
+          }
+        }
+      },
+      "开发工具": {
+        "type": "folder",
+        "children": {
+          "Visual Studio Code": {
+            "type": "url",
+            "url": "https://code.visualstudio.com",
+            "name": "VS Code",
+            "icon": ""
+          },
+          "PyCharm": {
+            "type": "url",
+            "url": "https://www.jetbrains.com/pycharm",
+            "name": "PyCharm",
+            "icon": ""
+          }
+        }
+      },
+      "GitHub": {
+        "type": "url",
+        "url": "https://github.com",
+        "name": "GitHub",
+        "icon": ""
+      },
+      "Stack Overflow": {
+        "type": "url",
+        "url": "https://stackoverflow.com",
+        "name": "Stack Overflow",
+        "icon": ""
+      }
+    }
+  },
+  "工具搜索": {
+    "type": "folder",
+    "children": {
+      "搜索引擎": {
+        "type": "folder",
+        "children": {
+          "Google": {
+            "type": "url",
+            "url": "https://www.google.com",
+            "name": "Google搜索",
+            "icon": ""
+          },
+          "百度": {
+            "type": "url",
+            "url": "https://www.baidu.com",
+            "name": "百度搜索",
+            "icon": ""
+          },
+          "Bing": {
+            "type": "url",
+            "url": "https://www.bing.com",
+            "name": "Bing搜索",
+            "icon": ""
+          }
+        }
+      },
+      "在线工具": {
+        "type": "folder",
+        "children": {
+          "JSON格式化": {
+            "type": "url",
+            "url": "https://jsonformatter.org",
+            "name": "JSON格式化工具",
+            "icon": ""
+          },
+          "图片压缩": {
+            "type": "url",
+            "url": "https://tinypng.com",
+            "name": "TinyPNG图片压缩",
+            "icon": ""
+          }
+        }
+      }
+    }
+  },
+  "学习资源": {
+    "type": "folder",
+    "children": {
+      "在线课程": {
+        "type": "folder",
+        "children": {
+          "Coursera": {
+            "type": "url",
+            "url": "https://www.coursera.org",
+            "name": "Coursera",
+            "icon": ""
+          },
+          "edX": {
+            "type": "url",
+            "url": "https://www.edx.org",
+            "name": "edX",
+            "icon": ""
+          },
+          "中国大学MOOC": {
+            "type": "url",
+            "url": "https://www.icourse163.org",
+            "name": "中国大学MOOC",
+            "icon": ""
+          }
+        }
+      },
+      "文档": {
+        "type": "folder",
+        "children": {
+          "菜鸟教程": {
+            "type": "url",
+            "url": "https://www.runoob.com",
+            "name": "菜鸟教程",
+            "icon": ""
+          },
+          "W3School": {
+            "type": "url",
+            "url": "https://www.w3school.com.cn",
+            "name": "W3School",
+            "icon": ""
+          }
+        }
+      }
+    }
+  },
+  "休闲娱乐": {
+    "type": "folder",
+    "children": {
+      "视频": {
+        "type": "folder",
+        "children": {
+          "哔哩哔哩": {
+            "type": "url",
+            "url": "https://www.bilibili.com",
+            "name": "哔哩哔哩",
+            "icon": ""
+          },
+          "YouTube": {
+            "type": "url",
+            "url": "https://www.youtube.com",
+            "name": "YouTube",
+            "icon": ""
+          }
+        }
+      },
+      "音乐": {
+        "type": "folder",
+        "children": {
+          "网易云音乐": {
+            "type": "url",
+            "url": "https://music.163.com",
+            "name": "网易云音乐",
+            "icon": ""
+          },
+          "QQ音乐": {
+            "type": "url",
+            "url": "https://y.qq.com",
+            "name": "QQ音乐",
+            "icon": ""
+          }
+        }
+      }
+    }
+  }
+}
