@@ -106,9 +106,9 @@ url-navigator/
 
 3. 
 
-4. 
+### Downolad trial version 
 
-5. 
+[URL Navigator] (https://github.com/yihufree/URL-Navigator/releases/download/V0.5/URLNav_20250608.zip)
 
 ## 🌐 Internationalization
 
