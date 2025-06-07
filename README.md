@@ -30,7 +30,7 @@ A modern, feature-rich desktop application for managing and organizing your book
 ### Prerequisites
 
 - Python 3.7 or higher
-- Windows, macOS, or Linux
+- Windows（not test in macOS or Linux)
 
 ### Installation
 
