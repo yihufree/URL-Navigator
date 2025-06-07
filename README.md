@@ -108,7 +108,7 @@ url-navigator/
 
 ### Downolad trial version 
 
-[URL Navigator] (https://github.com/yihufree/URL-Navigator/releases/download/V0.5/URLNav_20250608.zip)
+[URL Navigator](https://github.com/yihufree/URL-Navigator/releases/download/V0.5/URLNav_20250608.zip)
 
 ## 🌐 Internationalization
 
