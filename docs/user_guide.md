@@ -20,6 +20,7 @@ The main interface consists of:
 2. **Main Panel**: Shows bookmarks in the currently selected folder
 3. **Toolbar**: Contains actions like add, edit, delete, and search
 4. **Status Bar**: Displays information about selected items and app status
+5. **MagicBox Bar**: Displays the MagicBox buttor and the Visited websites
 
 ## Basic Operations
 
@@ -43,6 +44,9 @@ Alternatively, you can drag and drop URLs from your browser directly into URL Na
 #### Moving Bookmarks
 - Drag and drop bookmarks between folders
 - Use the right-click menu and select "Move to..."
+
+### Open the Magic Box
+Also known as Open the Mystery Box, it can be opened by clicking the circular magic box button on the upper right corner. You can directly select a number (1-5) or enter a number (>5) to browse randomly.
 
 ### Searching
 
