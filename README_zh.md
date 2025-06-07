@@ -30,7 +30,7 @@
 ### 系统要求
 
 - Python 3.7 或更高版本
-- Windows、macOS 或 Linux
+- Windows（macOS 和 Linux无测试）
 
 ### 安装方法
 
