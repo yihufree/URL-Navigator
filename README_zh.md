@@ -104,7 +104,11 @@ url-navigator/
 
 2. 
 
-3. ## 
+3.
+4.
+### 下载体验版
+
+[URL Navigator单EXE体验版](https://github.com/yihufree/URL-Navigator/releases/download/V0.5/URLNav_20250608.zip)
 
 ## 🌐 国际化
 
