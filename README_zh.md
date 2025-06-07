@@ -1,4 +1,4 @@
-# URL Navigator 网址导航
+# URL Navigator 飞歌网址导航
 
 [![License](https://img.shields.io/badge/license-Custom-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.7+-blue.svg)](https://python.org)
