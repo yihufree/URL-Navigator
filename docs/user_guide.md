@@ -46,7 +46,7 @@ Alternatively, you can drag and drop URLs from your browser directly into URL Na
 - Use the right-click menu and select "Move to..."
 
 ### Open the Magic Box
-Also known as Open the Mystery Box, it can be opened by clicking the circular magic box button on the upper right corner. You can directly select a number (1-5) or enter a number (>5) to browse randomly.
+it can be opened by clicking the circular magic box button on the upper right corner. You can directly select a number (1-5) or enter a number (>5) to browse randomly.
 
 ### Searching
 
