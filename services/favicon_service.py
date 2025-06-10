@@ -38,6 +38,33 @@ class FaviconService:
         
         logger.info(f"图标缓存目录: {cache_dir}")
     
+    def check_local_icon_exists(self, url):
+        """
+        检查本地缓存中是否已存在该URL对应的图标
+        
+        Args:
+            url: 网站URL
+            
+        Returns:
+            如果存在返回图标路径，否则返回None
+        """
+        # 规范化URL
+        if not url.startswith(('http://', 'https://')):
+            url = f'https://{url}'
+            
+        # 从URL中提取域名
+        domain = urlparse(url).netloc
+        
+        # 检查缓存
+        cache_key = self._get_cache_key(domain)
+        cached_path = os.path.join(self.cache_dir, cache_key)
+        
+        if os.path.exists(cached_path):
+            logger.info(f"找到本地缓存图标: {cached_path}")
+            return self._convert_to_relative_path(cached_path)
+        
+        return None
+    
     def get_favicon(self, url, min_size=16, prefer_size=32, force_refresh=False):
         """
         获取网站图标
