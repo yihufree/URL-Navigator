@@ -1051,6 +1051,10 @@ class MainWindow(QWidget):
         progress.setWindowModality(Qt.WindowModal)
         progress.setMinimumDuration(0)
         progress.setValue(0)
+        
+        # 设置进度对话框的最大宽度为800，限制滚动条长度
+        progress.setMaximumWidth(800)
+        
         progress.show()
         
         try:
@@ -1073,25 +1077,29 @@ class MainWindow(QWidget):
                 return
             
             # 更新进度对话框
-            progress.setMaximum(total_bookmarks)
+            progress.setMaximum(total_bookmarks * 2)  # 两个阶段，所以乘以2
             
-            # 更新每个书签的图标
+            # 统计变量
             updated_count = 0
             skipped_count = 0
+            local_cache_count = 0
+            network_download_count = 0
+            
+            # 第一阶段：检查本地缓存并关联
+            progress.setLabelText("第一阶段：检查本地缓存图标...")
             for i, (path, name, item) in enumerate(all_bookmarks):
                 if progress.wasCanceled():
                     break
                 
                 # 更新进度
                 progress.setValue(i + 1)
-                progress.setLabelText(f"正在刷新 ({i + 1}/{total_bookmarks}): {name}")
+                progress.setLabelText(f"检查本地缓存 ({i + 1}/{total_bookmarks}): {name}")
                 
                 try:
-                    # 检查是否需要更新该图标
                     url = item["url"]
                     current_icon = item.get("icon", "")
                     
-                    # 判断当前图标是否存在
+                    # 判断当前图标是否存在且不是默认图标
                     icon_exists = current_icon and os.path.exists(current_icon) and not current_icon.endswith("globe.png")
                     
                     # 如果选择仅更新缺失图标且当前图标存在，则跳过
@@ -1100,15 +1108,55 @@ class MainWindow(QWidget):
                         logger.info(f"跳过已有图标: {name}")
                         continue
                     
-                    # 获取新图标
+                    # 检查本地缓存中是否有该网址的图标
+                    local_icon = self.app.favicon_service.check_local_icon_exists(url)
+                    if local_icon:
+                        # 如果本地缓存中有图标，直接关联
+                        item["icon"] = local_icon
+                        local_cache_count += 1
+                        logger.info(f"使用本地缓存图标: {name}")
+                        
+                except Exception as e:
+                    logger.error(f"检查本地缓存失败 ({name}): {e}")
+            
+            # 第二阶段：对没有本地缓存的图标进行网络下载
+            progress.setLabelText("第二阶段：网络下载缺失图标...")
+            for i, (path, name, item) in enumerate(all_bookmarks):
+                if progress.wasCanceled():
+                    break
+                
+                # 更新进度
+                progress.setValue(total_bookmarks + i + 1)
+                progress.setLabelText(f"网络下载图标 ({i + 1}/{total_bookmarks}): {name}")
+                
+                try:
+                    url = item["url"]
+                    current_icon = item.get("icon", "")
+                    
+                    # 判断当前图标是否存在且不是默认图标
+                    icon_exists = current_icon and os.path.exists(current_icon) and not current_icon.endswith("globe.png")
+                    
+                    # 如果选择仅更新缺失图标且当前图标存在，则跳过
+                    if not force_refresh_all and icon_exists:
+                        continue
+                    
+                    # 检查是否已经在第一阶段处理过（有本地缓存）
+                    local_icon = self.app.favicon_service.check_local_icon_exists(url)
+                    if local_icon and item.get("icon") == local_icon:
+                        continue  # 已经在第一阶段处理过了
+                    
+                    # 进行网络下载
                     new_icon = self.app.favicon_service.get_favicon(url, force_refresh=True)
                     
                     # 更新书签
                     if new_icon:
                         item["icon"] = new_icon
-                        updated_count += 1
+                        network_download_count += 1
+                        
                 except Exception as e:
-                    logger.error(f"更新图标失败 ({name}): {e}")
+                    logger.error(f"网络下载图标失败 ({name}): {e}")
+            
+            updated_count = local_cache_count + network_download_count
             
             # 保存更改
             self.app.data_manager.save()
@@ -1117,9 +1165,11 @@ class MainWindow(QWidget):
             self.app.data_manager.data_changed.emit()
             
             # 显示完成消息
-            result_message = f"已成功更新 {updated_count} 个书签的图标"
+            result_message = f"图标更新完成！\n"
+            result_message += f"本地缓存关联: {local_cache_count} 个\n"
+            result_message += f"网络下载更新: {network_download_count} 个"
             if not force_refresh_all and skipped_count > 0:
-                result_message += f"，跳过 {skipped_count} 个已有图标的书签"
+                result_message += f"\n跳过已有图标: {skipped_count} 个"
                 
             QMessageBox.information(
                 self, 
@@ -1151,7 +1201,7 @@ class MainWindow(QWidget):
     def _show_about_dialog(self):
         """显示关于对话框"""
         # message = """<div style="font-size: 10pt;"><b>URL Navigator</b><br>作者：Yifree(开发者昵称)<br>版本：V0.5<br>时间：20250603<br><br>
-        message = """<div style="font-size: 10pt;"><b>名称：URL Navigator（中文名称：飞歌网址导航）</b><h3><pre>作者：Yifree(开发者昵称)               版本：V0.5             时间：20250607</pre></h3>
+        message = """<div style="font-size: 10pt;"><b>名称：URL Navigator（中文名称：飞歌网址导航）</b><h3><pre>作者：Yifree(开发者昵称)               版本：V0.51             时间：20250610</pre></h3>
     （一）URL Navigator（飞歌网址导航） 是一款功能丰富的网址导航与书签管理工具，支持书签的添加、编辑、剪切、复制、粘贴、删除、回退、移动、导入、导出、排序、锁定、图标更新、分组管理、智能搜索、语种切换、开魔盒、历史查询、自动备份等功能，帮助用户高效管理和访问保存的网址。<br>
     （二）💖特色功能："开魔盒"功能可随机浏览收藏的书签中的网站。用户先选择目录范围（不选择时为全部），再输入想打开的网址数量，软件会在选定的范围内随机打开指定数量的网址供浏览，每次浏览的网址图标会显示在“开魔盒”按钮下方，再次开魔盒时刷新。此功能方便保存大量书签的朋友查看自己保存的网站历史。<br>    
     （三）用户可自行设置网址的书签数据、图标文件、历史记录数据、日志文件的文件夹或名称，也可以设置数据自动备份文件夹（书签数据一般在C:\\Users\\用户名\\.url_navigator\\目录下，名称为bookmarks.json，用户可使用设置功能进行更改）。系统有每日自动备份功能，位置可在设置中更改。<br>
@@ -1160,7 +1210,8 @@ class MainWindow(QWidget):
     （六）软件有语种选择功能，提供部分语言主要操作界面翻译，满足不同语种使用人员的基本使用。<br>
     （七）本软件为个人开发，产权属于开发者本人（本页所示作者名称为昵称，权利人为昵称对应的实际开发者）。作者许可您一项个人的、可撤销的、不可转让的、非独占地和非商业的合法使用本产品的权利，您不享有本产品的所有权。作者基于本协议对您的授权仅为授权您个人以非商业的目的对于本产品进行使用，任何超出个人使用目的的使用行为都必须另行获得作者本人具体的、单独的、书面的授权，协议未明示授权的其他一切权利仍由我方保留，您在行使该等权利前须另行获得我方的书面许可，同时我方如未行使前述任何权利，并不构成对该权利的放弃。严禁任何单位和个人未经授权将软件（或将项目改头换面）用于营利或非法用途，否则将追究法律责任。<br>
     （八）本软件为个人开发，开发者不承担任何责任，请用户自行承担使用风险。<br>
-      💖🌹感谢您的使用！欢迎提出宝贵意见！😊 <br> </div>"""
+      💖🌹感谢您的使用！欢迎提出宝贵意见！😊 <br>
+      本项目地址：<a href="https://github.com/yihufree/URL-Navigator">https://github.com/yihufree/URL-Navigator</a> <br> </div>"""
         
         # 创建自定义对话框以更可靠地控制宽度
         dialog = QDialog(self)
