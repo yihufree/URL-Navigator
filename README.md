@@ -19,7 +19,6 @@ A modern, feature-rich desktop application for managing and organizing your book
 - 🔒 **Edit Lock Mode**: Prevent accidental modifications
 - 🌍 **Multi-language**: Support for Chinese, English, Japanese, German, French, Korean, and Spanish
 - 💾 **Auto-backup**: Automatic data backup and restore
-- 🎨 **Customizable UI**: Themes and layout customization
 
 ## 🖼️ Screenshots
 
