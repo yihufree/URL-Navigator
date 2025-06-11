@@ -142,6 +142,11 @@ class FaviconService:
                 
             response = self.session.get(url, timeout=self.timeout)
             if response.status_code == 200:
+                # 设置正确的编码，避免乱码问题
+                if response.encoding is None or response.encoding == 'ISO-8859-1':
+                    # 如果没有检测到编码或检测到的是默认编码，尝试从content-type或meta标签获取
+                    response.encoding = response.apparent_encoding or 'utf-8'
+                
                 soup = BeautifulSoup(response.text, 'html.parser')
                 title_tag = soup.find('title')
                 if title_tag:

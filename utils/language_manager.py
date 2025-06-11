@@ -44,9 +44,9 @@ class LanguageManager(QObject):
     def load_language(self, language_code):
         """加载指定语言文件"""
         try:
-            # 使用 resource_path 获取正确的语言文件路径
-            from build import resource_path
-            language_file = resource_path(os.path.join("languages", f"{language_code}.json"))
+            # 使用 path_utils 获取正确的语言文件路径
+            from .path_utils import get_language_file_path
+            language_file = get_language_file_path(language_code)
             if os.path.exists(language_file):
                 with open(language_file, 'r', encoding='utf-8') as f:
                     self.translations = json.load(f)
