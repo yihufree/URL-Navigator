@@ -108,7 +108,7 @@ url-navigator/
 
 ### 下载体验版
 
-[URL Navigator单EXE体验版](https://github.com/yihufree/URL-Navigator/releases/download/V0.51/URLNav_20250611v0.51.zip)
+[URL Navigator单EXE体验版](https://github.com/yihufree/URL-Navigator/releases/download/V0.60/URLNav_20250611.zip)
 
 ## 🌐 国际化
 
