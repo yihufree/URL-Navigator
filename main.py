@@ -16,6 +16,8 @@ from PyQt5.QtCore import Qt, QSettings, QThreadPool, QRunnable, pyqtSignal, QObj
 import json
 from logging.handlers import RotatingFileHandler
 from threading import Lock
+from utils.password_manager import PasswordManager
+from ui.password_dialogs import PasswordInputDialog
 
 # 配置日志
 def setup_logging():
@@ -54,6 +56,52 @@ def setup_logging():
 
 logger = logging.getLogger(__name__)
 
+def verify_password():
+    """验证密码"""
+    try:
+        password_manager = PasswordManager()
+        
+        # 如果未启用密码保护，直接返回True
+        if not password_manager.is_password_enabled():
+            logger.info("密码保护未启用，跳过验证")
+            return True
+        
+        logger.info("密码保护已启用，需要验证密码")
+        
+        # 创建临时应用程序实例用于显示对话框
+        temp_app = None
+        if not QApplication.instance():
+            temp_app = QApplication(sys.argv)
+        
+        # 显示密码输入对话框
+        from utils.language_manager import language_manager
+        dialog = PasswordInputDialog(
+            parent=None,
+            language_manager=language_manager,
+            password_manager=password_manager
+        )
+        
+        # 执行对话框
+        result = dialog.exec_()
+        
+        # 清理临时应用程序
+        if temp_app:
+            temp_app.quit()
+        
+        if result == QDialog.Accepted:
+            logger.info("密码验证成功")
+            return True
+        else:
+            logger.info("用户取消密码验证")
+            return False
+            
+    except Exception as e:
+        logger.error(f"密码验证过程中发生错误: {e}")
+        import traceback
+        traceback.print_exc()
+        # 如果验证过程出错，为了安全起见，拒绝访问
+        return False
+
 def main():
     try:
         # 设置日志
@@ -83,6 +131,11 @@ def main():
         style_path = resource_path("resources/styles/style.qss")
         with open(style_path, "r", encoding="utf-8") as f:
             app.setStyleSheet(f.read())
+        
+        # 密码验证
+        if not verify_password():
+            logger.info("密码验证失败，程序退出")
+            sys.exit(0)
         
         # 创建并显示主窗口
         window = UrlNavigatorApp()

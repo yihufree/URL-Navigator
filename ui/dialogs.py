@@ -16,6 +16,8 @@ from PyQt5.QtGui import QIcon, QFont
 from ui.icons import icon_provider
 from datetime import datetime
 from utils.language_manager import language_manager
+from utils.password_manager import PasswordManager
+from ui.password_dialogs import PasswordSettingsWidget
 
 logger = logging.getLogger(__name__)
 
@@ -1079,7 +1081,7 @@ class SettingsDialog(QDialog):
         self.app = app
         self.selected_language_code = language_manager.get_current_language()  # 初始化为当前语言
         self.setWindowTitle(language_manager.tr("dialogs.settings_title"))
-        self.setMinimumWidth(600)
+        self.setMinimumWidth(990)
         
         # 初始化配置管理器
         try:
@@ -1088,6 +1090,9 @@ class SettingsDialog(QDialog):
         except ImportError:
             logger.warning("配置管理器不可用")
             self.config_manager = None
+        
+        # 初始化密码管理器
+        self.password_manager = PasswordManager()
         
         self.init_ui()
 
@@ -1138,11 +1143,11 @@ class SettingsDialog(QDialog):
         backup_layout = QHBoxLayout(); backup_layout.addWidget(self.backup_dir_edit); backup_layout.addWidget(backup_btn)
         
         # 添加到表单
-        basic_form.addRow(language_manager.tr("settings.data_file_label"), data_layout)
-        basic_form.addRow(language_manager.tr("settings.icon_folder_label"), icon_layout)
-        basic_form.addRow(language_manager.tr("settings.log_file_label"), log_layout)
-        basic_form.addRow("历史记录文件：", history_layout)
-        basic_form.addRow(language_manager.tr("settings.backup_folder_label"), backup_layout)
+        basic_form.addRow("数据文件 Data File：", data_layout)
+        basic_form.addRow("图标文件夹 Icon Folder：", icon_layout)
+        basic_form.addRow("日志文件 Log File：", log_layout)
+        basic_form.addRow("历史记录文件 History File：", history_layout)
+        basic_form.addRow("备份文件夹 Backup Folder：", backup_layout)
         
         # 添加备份说明
         backup_info = QLabel(language_manager.tr("settings.backup_info"))
@@ -1188,9 +1193,9 @@ class SettingsDialog(QDialog):
         temp_layout = QHBoxLayout(); temp_layout.addWidget(self.temp_dir_edit); temp_layout.addWidget(temp_btn)
         
         # 添加到表单
-        advanced_form.addRow("导出目录：", export_layout)
-        advanced_form.addRow("导入目录：", import_layout)
-        advanced_form.addRow("临时文件目录：", temp_layout)
+        advanced_form.addRow("导出目录 Export Directory：", export_layout)
+        advanced_form.addRow("导入目录 Import Directory：", import_layout)
+        advanced_form.addRow("临时文件目录 Temp Directory：", temp_layout)
         
         # 高级路径说明
         advanced_paths_info = QLabel("高级路径设置说明：\n" +
@@ -1222,7 +1227,7 @@ class SettingsDialog(QDialog):
         self.language_combo.currentTextChanged.connect(self._on_language_changed)
         
         # 添加到表单
-        language_form.addRow(language_manager.tr("settings.language_label"), self.language_combo)
+        language_form.addRow("界面语言 Interface Language：", self.language_combo)
         
         # 语言设置说明
         language_info = QLabel("语言设置说明：\n" +
@@ -1234,15 +1239,21 @@ class SettingsDialog(QDialog):
         language_layout.addWidget(language_info)
         language_layout.addStretch(1)
         
+        # 创建密码设置选项卡
+        password_tab = self._create_password_tab()
+        
         # 添加选项卡到选项卡控件
-        tab_widget.addTab(basic_paths_tab, "基本路径")
-        tab_widget.addTab(advanced_paths_tab, "高级路径")
-        tab_widget.addTab(language_tab, "语言设置")
+        tab_widget.addTab(basic_paths_tab, "基本路径 Basic Paths")
+        tab_widget.addTab(advanced_paths_tab, "高级路径 Advanced Paths")
+        tab_widget.addTab(language_tab, "语言设置 Language Settings")
         
         # 如果配置管理器可用，添加配置管理选项卡
         if self.config_manager:
             config_management_tab = self._create_config_management_tab()
-            tab_widget.addTab(config_management_tab, "配置管理")
+            tab_widget.addTab(config_management_tab, "配置管理 Config Management")
+        
+        # 将密码设置选项卡放在配置管理选项卡的右侧
+        tab_widget.addTab(password_tab, "密码设置 Password Settings")
         
         # 添加选项卡控件到主布局
         layout.addWidget(tab_widget)
@@ -1252,6 +1263,12 @@ class SettingsDialog(QDialog):
         button_box.accepted.connect(self._save)
         button_box.rejected.connect(self.reject)
         button_box.button(QDialogButtonBox.Reset).clicked.connect(self._reset_to_defaults)
+        
+        # 设置按钮文字为中英文双语
+        button_box.button(QDialogButtonBox.Save).setText("保存 Save")
+        button_box.button(QDialogButtonBox.Cancel).setText("取消 Cancel")
+        button_box.button(QDialogButtonBox.Reset).setText("重置 Reset")
+        
         layout.addWidget(button_box)
         
         self.setLayout(layout)
@@ -1380,40 +1397,60 @@ class SettingsDialog(QDialog):
             from PyQt5.QtWidgets import QMessageBox
             QMessageBox.warning(self, "错误", f"重置失败: {str(e)}")
     
+    def _create_password_tab(self):
+        """创建密码设置选项卡"""
+        try:
+            password_widget = PasswordSettingsWidget(
+                parent=self,
+                language_manager=language_manager,
+                password_manager=self.password_manager
+            )
+            return password_widget
+        except Exception as e:
+            logger.error(f"创建密码设置选项卡失败: {e}")
+            # 如果创建失败，返回一个简单的错误提示界面
+            tab = QWidget()
+            layout = QVBoxLayout(tab)
+            error_label = QLabel(f"密码设置功能暂时不可用: {str(e)}")
+            error_label.setWordWrap(True)
+            layout.addWidget(error_label)
+            layout.addStretch()
+            return tab
+    
     def _create_config_management_tab(self):
         """创建配置管理选项卡"""
         tab = QWidget()
         layout = QVBoxLayout(tab)
         
         # 导入导出组
-        import_export_group = QGroupBox("配置导入导出")
+        import_export_group = QGroupBox("配置导入导出 Config Import/Export")
         import_export_layout = QGridLayout(import_export_group)
         
         # 导出配置
-        export_btn = QPushButton("导出配置")
+        export_btn = QPushButton("导出配置 Export Config")
         export_btn.clicked.connect(self._export_config)
-        import_export_layout.addWidget(QLabel("导出当前配置到文件:"), 0, 0)
+        import_export_layout.addWidget(QLabel("导出当前配置到文件 Export current config to file:"), 0, 0)
         import_export_layout.addWidget(export_btn, 0, 1)
         
         # 导入配置
-        import_btn = QPushButton("导入配置")
+        import_btn = QPushButton("导入配置 Import Config")
         import_btn.clicked.connect(self._import_config)
-        import_export_layout.addWidget(QLabel("从文件导入配置:"), 1, 0)
+        import_export_layout.addWidget(QLabel("从文件导入配置 Import config from file:"), 1, 0)
         import_export_layout.addWidget(import_btn, 1, 1)
         
         layout.addWidget(import_export_group)
         
         # 备份管理组
-        backup_group = QGroupBox("配置备份管理")
+        backup_group = QGroupBox("配置备份管理 Config Backup Management")
         backup_layout = QVBoxLayout(backup_group)
         
         # 备份按钮
         backup_btn_layout = QHBoxLayout()
-        create_backup_btn = QPushButton("创建备份")
+        create_backup_btn = QPushButton("创建备份 Create Backup")
         create_backup_btn.clicked.connect(self._create_backup)
         backup_btn_layout.addWidget(create_backup_btn)
         
-        clean_backup_btn = QPushButton("清理旧备份")
+        clean_backup_btn = QPushButton("清理旧备份 Clean Old Backups")
         clean_backup_btn.clicked.connect(self._clean_backups)
         backup_btn_layout.addWidget(clean_backup_btn)
         backup_btn_layout.addStretch()
@@ -1423,7 +1460,7 @@ class SettingsDialog(QDialog):
         # 备份列表
         self.backup_table = QTableWidget()
         self.backup_table.setColumnCount(3)
-        self.backup_table.setHorizontalHeaderLabels(["备份名称", "创建时间", "操作"])
+        self.backup_table.setHorizontalHeaderLabels(["备份名称 Backup Name", "创建时间 Created Time", "操作 Actions"])
         self.backup_table.horizontalHeader().setStretchLastSection(True)
         self.backup_table.setSelectionBehavior(QTableWidget.SelectRows)
         backup_layout.addWidget(self.backup_table)
@@ -1431,10 +1468,10 @@ class SettingsDialog(QDialog):
         layout.addWidget(backup_group)
         
         # 配置验证组
-        validation_group = QGroupBox("配置验证")
+        validation_group = QGroupBox("配置验证 Config Validation")
         validation_layout = QVBoxLayout(validation_group)
         
-        validate_btn = QPushButton("验证当前配置")
+        validate_btn = QPushButton("验证当前配置 Validate Current Config")
         validate_btn.clicked.connect(self._validate_config)
         validation_layout.addWidget(validate_btn)
         
@@ -1648,7 +1685,7 @@ class SettingsDialog(QDialog):
 class ExportDialog(QDialog):
     def __init__(self, parent=None, default_dir=None, current_path=None):
         super().__init__(parent)
-        self.setWindowTitle("导出书签/数据/日志")
+        self.setWindowTitle("导出书签/数据/日志 Export Bookmarks/Data/Logs")
         # 增加窗口尺寸
         self.resize(550, 320)
         self.selected_type = None
@@ -1691,7 +1728,7 @@ class ExportDialog(QDialog):
         layout.setContentsMargins(15, 20, 15, 20)  # 增加边距
         
         # 标题标签
-        title_label = QLabel("请选择要导出的内容类型和保存位置")
+        title_label = QLabel("请选择要导出的内容类型和保存位置 Please select content type and save location")
         title_label.setFont(QFont(font.family(), 11, QFont.Bold))
         title_label.setAlignment(Qt.AlignCenter)
         layout.addWidget(title_label)
@@ -1708,7 +1745,7 @@ class ExportDialog(QDialog):
         field_width = 410  # 设置一个统一的宽度变量
         
         # 数据导出范围
-        scope_label = QLabel("数据导出范围：")
+        scope_label = QLabel("数据导出范围 Export Scope：")
         scope_layout = QHBoxLayout()
         scope_layout.setSpacing(10)
         scope_layout.setContentsMargins(0, 0, 0, 0)
@@ -1716,12 +1753,12 @@ class ExportDialog(QDialog):
         self.scope_combo = QComboBox()
         self.scope_combo.setMinimumHeight(28)
         self.scope_combo.setFixedWidth(200)  # 使用固定宽度
-        self.scope_combo.addItems(["全部导出", "导出部分数据"])
+        self.scope_combo.addItems(["全部导出 Export All", "导出部分数据 Export Partial Data"])
         button_font = QFont(font.family(), 10)
         self.scope_combo.setFont(button_font)
         
         # 添加选择目录按钮
-        self.select_folder_btn = QPushButton("选择需要导出的书签目录")
+        self.select_folder_btn = QPushButton("选择需要导出的书签目录 Select Folder")
         self.select_folder_btn.setMinimumHeight(28)
         self.select_folder_btn.setFont(button_font)
         self.select_folder_btn.setFixedWidth(200)  # 使用固定宽度，确保对齐
@@ -1750,16 +1787,16 @@ class ExportDialog(QDialog):
         form_layout.addRow(empty_label, folder_layout)
         
         # 导出类型选择
-        type_label = QLabel("导出文件类型：")
+        type_label = QLabel("导出文件类型 File Type：")
         self.type_combo = QComboBox()
         self.type_combo.setMinimumHeight(28)
         self.type_combo.setFixedWidth(field_width)  # 使用固定宽度
-        self.type_combo.addItems(["HTML书签文件", "原型数据文件（JSON）", "日志文件"])
+        self.type_combo.addItems(["HTML书签文件 HTML Bookmarks", "原型数据文件（JSON） JSON Data File", "日志文件 Log File"])
         self.type_combo.setFont(button_font)
         form_layout.addRow(type_label, self.type_combo)
         
         # 路径选择
-        path_label = QLabel("导出文件位置：")
+        path_label = QLabel("导出文件位置 Export Location：")
         path_layout = QHBoxLayout()
         path_layout.setSpacing(10)
         path_layout.setContentsMargins(0, 0, 0, 0)
@@ -1769,7 +1806,7 @@ class ExportDialog(QDialog):
         self.path_edit.setFixedWidth(330)  # 使用固定宽度
         self.path_edit.setText(self.default_dir)  # 只显示目录，不含文件名
         
-        browse_btn = QPushButton("浏览...")
+        browse_btn = QPushButton("浏览... Browse")
         browse_btn.setMinimumHeight(28)
         browse_btn.setFixedWidth(70)
         browse_btn.setFont(button_font)
@@ -1782,7 +1819,7 @@ class ExportDialog(QDialog):
         form_layout.addRow(path_label, path_layout)
         
         # 文件名选择
-        filename_label = QLabel("导出文件名称：")
+        filename_label = QLabel("导出文件名称 File Name：")
         self.filename_edit = QLineEdit()
         self.filename_edit.setMinimumHeight(28)
         self.filename_edit.setFixedWidth(field_width)  # 使用固定宽度
@@ -1793,7 +1830,7 @@ class ExportDialog(QDialog):
         # 按钮布局
         btn_layout = QHBoxLayout()
         btn_layout.setSpacing(15)  # 增加按钮之间的间距
-        export_all_btn = QPushButton("导出全部书签（HTML\\JSON）和日志3个文件")
+        export_all_btn = QPushButton("导出全部书签（HTML\\JSON）和日志3个文件 Export All Files")
         export_all_btn.setMinimumHeight(32)  # 增加按钮高度
         export_all_btn.setFont(QFont(button_font.family(), 10, QFont.Bold))
         export_all_btn.clicked.connect(self.accept_all)
@@ -1801,13 +1838,13 @@ class ExportDialog(QDialog):
         
         btn_layout.addStretch(1)
         
-        ok_btn = QPushButton("导出")
+        ok_btn = QPushButton("导出 Export")
         ok_btn.setMinimumHeight(32)  # 增加按钮高度
         ok_btn.setMinimumWidth(80)   # 设置按钮宽度
         ok_btn.setFont(button_font)
         ok_btn.clicked.connect(self.accept)
         
-        cancel_btn = QPushButton("取消")
+        cancel_btn = QPushButton("取消 Cancel")
         cancel_btn.setMinimumHeight(32)  # 增加按钮高度
         cancel_btn.setMinimumWidth(80)   # 设置按钮宽度
         cancel_btn.setFont(button_font)
@@ -1818,7 +1855,7 @@ class ExportDialog(QDialog):
         layout.addLayout(btn_layout)
 
         # 说明文字
-        help_text = QLabel("注：导出的文件将根据导出设置命名保存到指定位置")
+        help_text = QLabel("注：导出的文件将根据导出设置命名保存到指定位置 Note: Files will be saved with names based on export settings")
         help_text.setAlignment(Qt.AlignCenter)
         help_text.setStyleSheet("color: #666;")
         layout.addWidget(help_text)
@@ -1836,7 +1873,7 @@ class ExportDialog(QDialog):
             if self.current_path and not self.selected_folder:
                 folder_name = self.current_path[-1] if self.current_path else ""
                 self.selected_folder = folder_name
-                self.selected_folder_label.setText(f"已选择导出目录: {folder_name}")
+                self.selected_folder_label.setText(f"已选择导出目录 Selected Folder: {folder_name}")
         else:
             self.select_folder_btn.setEnabled(False)
             self.selected_folder = None
@@ -1856,7 +1893,7 @@ class ExportDialog(QDialog):
                 if selected_path:
                     self.selected_folder = selected_path[-1]
                     self.export_directory = selected_path
-                    self.selected_folder_label.setText(f"已选择导出目录: {self.selected_folder}")
+                    self.selected_folder_label.setText(f"已选择导出目录 Selected Folder: {self.selected_folder}")
                     self._update_default_name()
 
     def _update_default_name(self):
@@ -1883,7 +1920,7 @@ class ExportDialog(QDialog):
 
     def _browse(self):
         """选择导出文件夹位置"""
-        directory = QFileDialog.getExistingDirectory(self, "选择导出文件夹", self.path_edit.text())
+        directory = QFileDialog.getExistingDirectory(self, "选择导出文件夹 Select Export Folder", self.path_edit.text())
         if directory:
             self.path_edit.setText(directory)
             self._update_default_name()  # 更新文件名
@@ -1917,7 +1954,7 @@ class ExportDialog(QDialog):
 class SelectFolderDialog(QDialog):
     def __init__(self, data_manager, current_path=None, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("选择要导出的书签目录")
+        self.setWindowTitle("选择要导出的书签目录 Select Bookmark Folder to Export")
         self.resize(350, 500)
         self.data_manager = data_manager
         self.current_path = current_path
@@ -1935,9 +1972,9 @@ class SelectFolderDialog(QDialog):
         
         # 按钮
         btn_layout = QHBoxLayout()
-        ok_btn = QPushButton("确定")
+        ok_btn = QPushButton("确定 OK")
         ok_btn.clicked.connect(self.accept)
-        cancel_btn = QPushButton("取消")
+        cancel_btn = QPushButton("取消 Cancel")
         cancel_btn.clicked.connect(self.reject)
         btn_layout.addStretch(1)
         btn_layout.addWidget(ok_btn)
