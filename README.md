@@ -55,6 +55,7 @@ A modern, feature-rich desktop application for managing and organizing your book
    ### Alternative: Download Pre-built Executable
    
    Download the latest release from the Releases page.
+   [URLNav_20260401](https://github.com/yihufree/URL-Navigator/releases/download/V0.60/URLNav_20260401.exe)
 
 ## 📖 Usage
 
