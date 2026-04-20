@@ -16,6 +16,7 @@ A modern, feature-rich desktop application for managing and organizing your book
 - 📥 **Import/Export**: Support for Chrome, Firefox, HTML, and JSON formats
 - 🎲 **Blind Box**: Random bookmark discovery feature
 - 📚 **History Tracking**: Keep track of accessed bookmarks
+- 🔒 **Password Protection**: Secure your bookmarks with password authentication
 - 🔒 **Edit Lock Mode**: Prevent accidental modifications
 - 🌍 **Multi-language**: Support for Chinese, English, Japanese, German, French, Korean, and Spanish
 - 💾 **Auto-backup**: Automatic data backup and restore
@@ -61,11 +62,16 @@ A modern, feature-rich desktop application for managing and organizing your book
 
 ### Basic Operations
 
-1. Adding Bookmarks : Click the "Add" button or drag URLs from your browser
-2. Creating Folders : Right-click in the sidebar to create new folders
-3. Searching : Use Ctrl+F or click the search icon
-4. Import/Export : Access through the File menu
-   For detailed instructions, see the User Guide .
+1. **Adding Bookmarks**: Click the "Add" button or drag URLs from your browser
+2. **Creating Folders**: Right-click in the sidebar to create new folders
+3. **Searching**: Use Ctrl+F or click the search icon
+4. **Import/Export**: Access through the File menu
+5. **Password Protection**: Set up password protection in Settings → Password Settings
+   - Enable password protection and set your password
+   - Configure security questions for password recovery
+   - Password will be required on next startup
+
+For detailed instructions, see the User Guide.
 
 ## 🛠️ Development
 
